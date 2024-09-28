@@ -5,7 +5,7 @@ const CHANNEL = "channel"
 const client = AgoraRTC.createClient({mode:'rtc', codec:'vp8'})
 
 let localTracks = []
-let remoteUsers = {}
+let utilisateurs = {}
 
 let joinAndDisplayLocalStream = async () => {
 
@@ -34,7 +34,7 @@ let joinStream = async () => {
 }
 
 let handleUserJoined = async (user, mediaType) => {
-    remoteUsers[user.uid] = user 
+    utilisateurs[user.uid] = user 
     await client.subscribe(user, mediaType)
 
     if (mediaType === 'video'){
@@ -57,7 +57,7 @@ let handleUserJoined = async (user, mediaType) => {
 }
 
 let handleUserLeft = async (user) => {
-    delete remoteUsers[user.uid]
+    delete utilisateurs[user.uid]
     document.getElementById(`user-container-${user.uid}`).remove()
 }
 
