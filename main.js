@@ -1,70 +1,70 @@
 const APP_ID = "88a36e1ac69241a6913671943cf1bce4"
 const TOKEN = "007eJxTYDhwOl/oQESzTFnCpJjebSeulZ/1yLkfJbW+eva0n0LeCz8rMFhYJBqbpRomJptZGpkYJppZGhqbmRtamhgnpxkmJaea7N7Yl9YQyMhgFbOPlZGBkYEFiEF8JjDJDCZZwCQ7Q3JGYl5eag4DAwBx9CRg"
-const CHANNEL = "channel"
+const CANAL = "canal"
 
 const client = AgoraRTC.createClient({mode:'rtc', codec:'vp8'})
 
-let localTracks = []
+let pistesLocales = []
 let utilisateurs = {}
 
-let joinAndDisplayLocalStream = async () => {
+let rejoindreEtAfficherFluxLocal = async () => {
 
-    client.on('user-published', handleUserJoined)
+    client.on('user-published', gererUtilisateurRejoint)
     
-    client.on('user-left', handleUserLeft)
+    client.on('user-left', gererUtilisateurParti)
     
-    let UID = await client.join(APP_ID, CHANNEL, TOKEN, null)
+    let UID = await client.join(APP_ID, CANAL, TOKEN, null)
 
-    localTracks = await AgoraRTC.createMicrophoneAndCameraTracks() 
+    pistesLocales = await AgoraRTC.createMicrophoneAndCameraTracks() 
 
     let player = `<div class="video-container" id="user-container-${UID}">
                         <div class="video-player" id="user-${UID}"></div>
                   </div>`
     document.getElementById('video-streams').insertAdjacentHTML('beforeend', player)
 
-    localTracks[1].play(`user-${UID}`)
+    pistesLocales[1].play(`user-${UID}`)
     
-    await client.publish([localTracks[0], localTracks[1]])
+    await client.publish([pistesLocales[0], pistesLocales[1]])
 }
 
-let joinStream = async () => {
-    await joinAndDisplayLocalStream()
+let rejoindreFlux = async () => {
+    await rejoindreEtAfficherFluxLocal()
     document.getElementById('join-btn').style.display = 'none'
     document.getElementById('stream-controls').style.display = 'flex'
 }
 
-let handleUserJoined = async (user, mediaType) => {
-    utilisateurs[user.uid] = user 
-    await client.subscribe(user, mediaType)
+let gererUtilisateurRejoint = async (utilisateur, typeMedia) => {
+    utilisateurs[utilisateur.uid] = utilisateur 
+    await client.subscribe(utilisateur, typeMedia)
 
-    if (mediaType === 'video'){
-        let player = document.getElementById(`user-container-${user.uid}`)
+    if (typeMedia === 'video'){
+        let player = document.getElementById(`user-container-${utilisateur.uid}`)
         if (player != null){
             player.remove()
         }
 
-        player = `<div class="video-container" id="user-container-${user.uid}">
-                        <div class="video-player" id="user-${user.uid}"></div> 
+        player = `<div class="video-container" id="user-container-${utilisateur.uid}">
+                        <div class="video-player" id="user-${utilisateur.uid}"></div> 
                  </div>`
         document.getElementById('video-streams').insertAdjacentHTML('beforeend', player)
 
-        user.videoTrack.play(`user-${user.uid}`)
+        utilisateur.videoTrack.play(`user-${utilisateur.uid}`)
     }
 
-    if (mediaType === 'audio'){
-        user.audioTrack.play()
+    if (typeMedia === 'audio'){
+        utilisateur.audioTrack.play()
     }
 }
 
-let handleUserLeft = async (user) => {
-    delete utilisateurs[user.uid]
-    document.getElementById(`user-container-${user.uid}`).remove()
+let gererUtilisateurParti = async (utilisateur) => {
+    delete utilisateurs[utilisateur.uid]
+    document.getElementById(`user-container-${utilisateur.uid}`).remove()
 }
 
-let leaveAndRemoveLocalStream = async () => {
-    for(let i = 0; localTracks.length > i; i++){
-        localTracks[i].stop()
-        localTracks[i].close()
+let quitterEtRetirerFluxLocal = async () => {
+    for(let i = 0; pistesLocales.length > i; i++){
+        pistesLocales[i].stop()
+        pistesLocales[i].close()
     }
 
     await client.leave()
@@ -73,31 +73,31 @@ let leaveAndRemoveLocalStream = async () => {
     document.getElementById('video-streams').innerHTML = ''
 }
 
-let toggleMic = async (e) => {
-    if (localTracks[0].muted){
-        await localTracks[0].setMuted(false)
+let basculerMicro = async (e) => {
+    if (pistesLocales[0].muted){
+        await pistesLocales[0].setMuted(false)
         e.target.innerText = 'Micro allumé'
         e.target.style.backgroundColor = 'cadetblue'
     }else{
-        await localTracks[0].setMuted(true)
+        await pistesLocales[0].setMuted(true)
         e.target.innerText = 'Micro éteint'
         e.target.style.backgroundColor = '#EE4B2B'
     }
 }
 
-let toggleCamera = async (e) => {
-    if(localTracks[1].muted){
-        await localTracks[1].setMuted(false)
-        e.target.innerText = 'Camera allumée'
+let basculerCamera = async (e) => {
+    if(pistesLocales[1].muted){
+        await pistesLocales[1].setMuted(false)
+        e.target.innerText = 'Caméra allumée'
         e.target.style.backgroundColor = 'cadetblue'
     }else{
-        await localTracks[1].setMuted(true)
-        e.target.innerText = 'Camera éteinte'
+        await pistesLocales[1].setMuted(true)
+        e.target.innerText = 'Caméra éteinte'
         e.target.style.backgroundColor = '#EE4B2B'
     }
 }
 
-document.getElementById('join-btn').addEventListener('click', joinStream)
-document.getElementById('leave-btn').addEventListener('click', leaveAndRemoveLocalStream)
-document.getElementById('mic-btn').addEventListener('click', toggleMic)
-document.getElementById('camera-btn').addEventListener('click', toggleCamera)
+document.getElementById('join-btn').addEventListener('click', rejoindreFlux)
+document.getElementById('leave-btn').addEventListener('click', quitterEtRetirerFluxLocal)
+document.getElementById('mic-btn').addEventListener('click', basculerMicro)
+document.getElementById('camera-btn').addEventListener('click', basculerCamera)
