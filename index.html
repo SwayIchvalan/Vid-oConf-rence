@@ -1,27 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <title>Application de Streaming</title>
 </head>
 <body>
 
+    <!-- Bouton pour rejoindre le flux -->
     <button id="join-btn">Rejoindre</button>
 
+    <!-- Conteneur pour le flux vidéo et les contrôles de flux -->
     <div id="stream-wrapper">
+        <!-- Conteneur pour les flux vidéo des utilisateurs -->
         <div id="video-streams"></div>
 
-        <div id="stream-controls">
+        <!-- Contrôles de flux : Quitter, Micro, et Caméra -->
+        <div id="stream-controls" style="display: none;">
             <button id="leave-btn">Quitter</button>
             <button id="mic-btn">Micro</button>
-            <button id="camera-btn">Camera</button>
+            <button id="camera-btn">Caméra</button>
         </div>
     </div>
-    
+
 </body>
-<!-- <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script> -->
+<!-- Charger le SDK Agora RTC version 4.7.3 -->
 <script src="AgoraRTC_N-4.7.3.js"></script>
+<!-- Charger le fichier JavaScript principal -->
 <script src='main.js'></script>
 </html>
